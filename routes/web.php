@@ -33,3 +33,4 @@ $router->post('/sales/invoice/service', 'myobController@create_service_invoice')
 $router->post('/sales/payments','myobController@payment');
 $router->post('/sales/payments-with-discount','myobController@payemtWithDiscount');
 $router->post('/sales/invoice/item', 'myobController@create_item_invoice');
+$router->get('/report/profit-loss-summary', 'myobController@profit_loss_summary');

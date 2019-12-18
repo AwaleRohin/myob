@@ -414,4 +414,37 @@ class myobController extends Controller
             'message' => 'Invoice created'
         ], 201);
     }
+
+
+    public function profit_loss_summary(Request $request){
+        $uri = $this->get_crf_uri_or_token($request);
+        if ($uri == null) {
+            return response()->json([
+                'status' => false,
+                'message' => 'crf url not found'
+            ]);
+        }
+        $crf_uri = $uri->crf_uri;
+        $url = $crf_uri . "/Report/ProfitAndLossSummary?StartDate=".$request->start_date."&EndDate=".$request->end_date."&ReportingBasis=".$request->reporting_basis."&YearEndAdjust=".$request->year_end_adjust;
+
+        $headers = $this->post_req_headers($request);
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+
+        try {
+            $response = $client->request('GET', $url);
+        } catch (\Exception $exception) {
+            $response = $exception->getResponse()->getBody(true);
+            return response()->json([
+                'status' => false,
+                'error' => json_decode((string) $response, true)
+            ]);
+        }
+        $body = $response->getBody();
+        $result =  json_decode((string) $body, true);
+        return response()->json([
+            $result
+        ], 200);
+    }
 }
