@@ -183,7 +183,7 @@ class myobController extends Controller
     }
 
 
-    public function create_invoice(Request $request)
+    public function create_service_invoice(Request $request)
     {
         $uri = $this->get_crf_uri_or_token($request);
         if ($uri == null) {
@@ -353,6 +353,65 @@ class myobController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Payment with discount created'
+        ], 201);
+    }
+
+
+    public function create_item_invoice(Request $request){
+        $uri = $this->get_crf_uri_or_token($request);
+        if ($uri == null) {
+            return response()->json([
+                'status' => false,
+                'message' => 'crf url not found'
+            ]);
+        }
+        $crf_uri = $uri->crf_uri;
+        $url = $crf_uri . "/Sale/Invoice/Item";
+        $date = \Carbon\Carbon::now()->toDateTimeString();
+        $customer_uid = $request->customer_uid;
+        $ship_quantity = $request->ship_quantity;
+        $total = $request->total_amount;
+        $item_uid = $request->item_uid;
+        $taxcode_uid = $request->taxcode_uid;
+        $rowversion = $request->rowversion;
+
+        $headers = $this->post_req_headers($request);
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+
+        try {
+            $response = $client->request('POST', $url, [
+                'json' => [
+                    'Date' => $date,
+                    'Customer' => [
+                        'UID' => $customer_uid
+                    ],
+                    'Lines' => [[
+                        'ShipQuantity'=>$ship_quantity,
+                        'Total' => $total,
+                        'Item' => [
+                            'UID' => $item_uid
+                        ],
+                        'TaxCode' => [
+                            'UID' => $taxcode_uid
+                        ],
+                        'RowVersion' => $rowversion
+                    ]]
+                ]
+            ]);
+        } catch (\Exception $exception) {
+            $response = $exception->getResponse()->getBody(true);
+            return response()->json([
+                'status' => false,
+                'error' => json_decode((string) $response, true)
+            ]);
+        }
+        $body = $response->getBody();
+        $result =  json_decode((string) $body, true);
+        return response()->json([
+            'status' => true,
+            'message' => 'Invoice created'
         ], 201);
     }
 }

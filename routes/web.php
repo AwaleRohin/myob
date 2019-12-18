@@ -29,6 +29,7 @@ $router->get('/', 'myobController@myob_redirect');
 $router->get('/accounts', 'myobController@access_token');
 $router->get('/accountright', 'myobController@accountright_myob');
 $router->get('/refresh', 'myobController@refresh_access_token');
-$router->post('/sales/invoice', 'myobController@create_invoice');
+$router->post('/sales/invoice/service', 'myobController@create_service_invoice');
 $router->post('/sales/payments','myobController@payment');
 $router->post('/sales/payments-with-discount','myobController@payemtWithDiscount');
+$router->post('/sales/invoice/item', 'myobController@create_item_invoice');
