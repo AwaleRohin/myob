@@ -34,3 +34,6 @@ $router->post('/sales/payments','myobController@payment');
 $router->post('/sales/payments-with-discount','myobController@payemtWithDiscount');
 $router->post('/sales/invoice/item', 'myobController@create_item_invoice');
 $router->get('/report/profit-loss-summary', 'myobController@profit_loss_summary');
+$router->get('/api/documentation', function ()  {
+    return view('index');
+});

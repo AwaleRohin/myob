@@ -1,0 +1,741 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Myob API",
+        "contact": {
+            "email": "rohinawale331@gmail.com"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "tags": [
+                    "Myob"
+                ],
+                "summary": "Redirects to myob login page to get necessary access_token",
+                "operationId": "App\\Http\\Controllers\\myobController::access_token",
+                "responses": {
+                    "200": {
+                        "description": "Returns access token, refresh token along with some basic other info",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string"
+                                        },
+                                        "token_type": {
+                                            "type": "string"
+                                        },
+                                        "expires_in": {
+                                            "type": "string"
+                                        },
+                                        "refresh_token": {
+                                            "type": "string"
+                                        },
+                                        "scope": {
+                                            "type": "string"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "uid": {
+                                                    "type": "string"
+                                                },
+                                                "email": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object",
+                                    "example": {
+                                        "access_token": "A77vnJ5IYQmXxtHLHf1wipwJ-ritfSQB4Yn40X0LBQTFh75vjgQgvGbjmldj4Jqo8fnkEbsh--33ZC90XHtA8GGVMp5KcmMrHJulKU_P7Hv836tyBp_94F24o6Srn5h-1p7WIPPS72i4UtNs57gfDoPeP3RCNa6chMDc7blRwBYtM0ce2DmOgOK",
+                                        "token_type": "bearer",
+                                        "expires_in": "1200",
+                                        "refresh_token": "Ta7J!IAAAABX4_n6xm0ejXjBguhKHLM6LKyDualw1cCPLx0HZbXQvsQAAAAHIozyXQtIK5LdL46Xe84JNIWIHF50wJ0Aqf2Dh4NeeLB2YRwnWXd7WOkOCgh6z6_Vpu9sxmllT5_yZQiW_LKPiakx",
+                                        "scope": "CompanyFile",
+                                        "user": {
+                                            "uid": "69f9884a7-7rt0-4d58-8439-93euhha4b29d",
+                                            "username": "example@gmail.com"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request."
+                    }
+                }
+            }
+        },
+        "/accountright": {
+            "get": {
+                "tags": [
+                    "Myob"
+                ],
+                "summary": "Account Right Live",
+                "operationId": "App\\Http\\Controllers\\myobController::accountright_myob",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "bearer token -- access token",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-myobapi-key",
+                        "in": "header",
+                        "description": "myob client secret",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns company uid and other info",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "Id": {
+                                            "type": "string"
+                                        },
+                                        "Name": {
+                                            "type": "string"
+                                        },
+                                        "LibraryPath": {
+                                            "type": "string"
+                                        },
+                                        "ProductVersion": {
+                                            "type": "string"
+                                        },
+                                        "ProductLevel": {
+                                            "properties": {
+                                                "Code": {
+                                                    "type": "string"
+                                                },
+                                                "Name": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "CheckOutDate": {
+                                            "type": "string"
+                                        },
+                                        "CheckOutBy": {
+                                            "type": "string"
+                                        },
+                                        "Uri": {
+                                            "type": "string"
+                                        },
+                                        "Country": {
+                                            "type": "string"
+                                        },
+                                        "LauncherId": {
+                                            "type": "string"
+                                        },
+                                        "SerialNumber": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object",
+                                    "example": {
+                                        "Id": "g856461f-b3dg-p05r-b7t2-f2c4f066078e",
+                                        "Name": "API Sandbox Demo 125",
+                                        "LibraryPath": "API Sandbox Demo 125",
+                                        "ProductVersion": "2019.4",
+                                        "ProductLevel": {
+                                            "Code": 30,
+                                            "Name": "Plus"
+                                        },
+                                        "CheckedOutDate": null,
+                                        "CheckedOutBy": null,
+                                        "Uri": "https://ar1.api.myob.com/accountright/g856461f-b3dg-p05r-b7t2-f2c4f066078e",
+                                        "Country": "AU",
+                                        "LauncherId": "5abb5380-1gh7-80k9-8r64-gfe0c63347fa",
+                                        "SerialNumber": "728164104656"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request."
+                    }
+                }
+            }
+        },
+        "/refresh": {
+            "get": {
+                "tags": [
+                    "Myob"
+                ],
+                "summary": "Refresh access token",
+                "operationId": "App\\Http\\Controllers\\myobController::refresh_access_token",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "bearer token -- access token",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-myobapi-key",
+                        "in": "header",
+                        "description": "myob client secret",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns new access_token and other info",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "access_token": {
+                                            "type": "string"
+                                        },
+                                        "token_type": {
+                                            "type": "string"
+                                        },
+                                        "expires_in": {
+                                            "type": "string"
+                                        },
+                                        "refresh_token": {
+                                            "type": "string"
+                                        },
+                                        "scope": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object",
+                                    "example": {
+                                        "access_token": "AAEAAI3H59w6F9JPGcp3dXy95pTJK0waL6AwiLdoQ81ncmxeVgbq_4LF9uDy5Gm0c8IjSTAoloZAd5C8rhDXHsTNlYRN29Q7gUtqcPRu3UgaWrEEDTCEaGgoK6Y9xmDyUyMG-G_wB6yctDLThyVxfW",
+                                        "token_type": "bearer",
+                                        "expires_in": "1200",
+                                        "refresh_token": "Ta7J!IAAAABM7-Bybtc3FXSCv5EoLDxVz0occm27cUxZ_LMm-p6_AsQAAAAHudWF_CWSa_eID89iGDVe1Rij-Xgt5a6zFZ2IjbwSOcdh3C0JCYrefm5D7tI3gxkvM8QziRusgfUZTs9wbi-pVY7gQOxW2KEU_XYSp4BNfl18JIXe8R4tUM9TlgOO0fbrMaPPIafA9sdYc_u4Ag",
+                                        "scope": "CompanyFile"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request."
+                    }
+                }
+            }
+        },
+        "/sales/invoice/service": {
+            "post": {
+                "tags": [
+                    "Myob"
+                ],
+                "summary": "Create Invoice of Services",
+                "operationId": "App\\Http\\Controllers\\myobController::create_service_invoice",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "bearer token -- access token",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-myobapi-version",
+                        "in": "header",
+                        "description": "account right version",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-myobapi-cftoken",
+                        "in": "header",
+                        "description": "base64encoded string of username and password",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "customer_uid": {
+                                        "type": "string"
+                                    },
+                                    "account_uid": {
+                                        "type": "string"
+                                    },
+                                    "taxcode_uid": {
+                                        "type": "string"
+                                    },
+                                    "total_amount": {
+                                        "type": "integer"
+                                    },
+                                    "rowversion": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "customer_uid": "8013da04-7cb5-49c5-a8ce-1e25b402aab0",
+                                    "account_uid": "d3f55ef1-ce77-4ef2-a415-61d04db2c5fc",
+                                    "taxcode_uid": "2ab1cf79-bce8-4da0-986c-a3bbdd1d02bc",
+                                    "total_amount": -49.5,
+                                    "rowversion": "-3848888831541510144"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns status and message",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object",
+                                    "example": {
+                                        "status": true,
+                                        "message": "Invoice created"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request."
+                    }
+                }
+            }
+        },
+        "/sales/payments": {
+            "post": {
+                "tags": [
+                    "Myob"
+                ],
+                "summary": "Create Payment/s",
+                "operationId": "App\\Http\\Controllers\\myobController::payment",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "bearer token -- access token",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-myobapi-version",
+                        "in": "header",
+                        "description": "account right version",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-myobapi-cftoken",
+                        "in": "header",
+                        "description": "base64encoded string of username and password",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "deposit_to": {
+                                        "type": "string"
+                                    },
+                                    "account_uid": {
+                                        "type": "string"
+                                    },
+                                    "invoice_uid": {
+                                        "type": "string"
+                                    },
+                                    "customer_uid": {
+                                        "type": "string"
+                                    },
+                                    "amount_applied": {
+                                        "type": "integer"
+                                    },
+                                    "type": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "deposit_to": "Account",
+                                    "account_uid": "d3f55ef1-ce77-4ef2-a415-61d04db2c5fc",
+                                    "invoice_uid": "bbd73e1b-214b-4543-bd22-0798849ad32f",
+                                    "customer_uid": "8013da04-7cb5-49c5-a8ce-1e25b402aab0",
+                                    "amount_applied": 496.5,
+                                    "type": "Invoice"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns status and message",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object",
+                                    "example": {
+                                        "status": true,
+                                        "message": "Payment created"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request."
+                    }
+                }
+            }
+        },
+        "/sales/payments-with-discount": {
+            "post": {
+                "tags": [
+                    "Myob"
+                ],
+                "summary": "Create Payment/s with discount",
+                "operationId": "App\\Http\\Controllers\\myobController::payemtWithDiscount",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "bearer token -- access token",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-myobapi-version",
+                        "in": "header",
+                        "description": "account right version",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-myobapi-cftoken",
+                        "in": "header",
+                        "description": "base64encoded string of username and password",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "deposit_to": {
+                                        "type": "string"
+                                    },
+                                    "account_uid": {
+                                        "type": "string"
+                                    },
+                                    "invoice_uid": {
+                                        "type": "string"
+                                    },
+                                    "customer_uid": {
+                                        "type": "string"
+                                    },
+                                    "amount_applied": {
+                                        "type": "integer"
+                                    },
+                                    "discount_applied": {
+                                        "type": "integer"
+                                    },
+                                    "type": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "deposit_to": "Account",
+                                    "account_uid": "d3f55ef1-ce77-4ef2-a415-61d04db2c5fc",
+                                    "invoice_uid": "bbd73e1b-214b-4543-bd22-0798849ad32f",
+                                    "customer_uid": "8013da04-7cb5-49c5-a8ce-1e25b402aab0",
+                                    "amount_applied": 496.5,
+                                    "discount_applied": 26,
+                                    "type": "Invoice"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns status and message",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object",
+                                    "example": {
+                                        "status": true,
+                                        "message": "Payment with discount created"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request."
+                    }
+                }
+            }
+        },
+        "sales/invoice/item": {
+            "post": {
+                "tags": [
+                    "Myob"
+                ],
+                "summary": "Create item invoice",
+                "operationId": "App\\Http\\Controllers\\myobController::create_item_invoice",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "bearer token -- access token",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-myobapi-version",
+                        "in": "header",
+                        "description": "account right version",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-myobapi-cftoken",
+                        "in": "header",
+                        "description": "base64encoded string of username and password",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "customer_uid": {
+                                        "type": "string"
+                                    },
+                                    "item_uid": {
+                                        "type": "string"
+                                    },
+                                    "taxcode_uid": {
+                                        "type": "string"
+                                    },
+                                    "ship_quantity": {
+                                        "type": "integer"
+                                    },
+                                    "total_amount": {
+                                        "type": "integer"
+                                    },
+                                    "rowversion": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "customer_uid": "8013da04-7cb5-49c5-a8ce-1e25b402aab0",
+                                    "item_uid": "4866c877-5b65-4567-900e-310a8a62897f",
+                                    "taxcode_uid": "2ab1cf79-bce8-4da0-986c-a3bbdd1d02bc",
+                                    "ship_quantity": 20,
+                                    "total_amount": 399.5,
+                                    "rowversion": "-3848888831541510144"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns status and message",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object",
+                                    "example": {
+                                        "status": true,
+                                        "message": "Invoice created"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request."
+                    }
+                }
+            }
+        },
+        "/report/profit-loss-summary": {
+            "get": {
+                "tags": [
+                    "Myob"
+                ],
+                "summary": "Profit Loss Summary",
+                "operationId": "App\\Http\\Controllers\\myobController::profit_loss_summary",
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "bearer token -- access token",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-myobapi-version",
+                        "in": "header",
+                        "description": "account right version",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "x-myobapi-cftoken",
+                        "in": "header",
+                        "description": "base64encoded string of username and password",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "path",
+                        "description": "date to get summary from",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "path",
+                        "description": "date to get summary up to",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "reporting_basis",
+                        "in": "path",
+                        "description": "Should be Cash or Accural",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "year_end_adjust",
+                        "in": "path",
+                        "description": "Should be boolean",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns profit and loss summary",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad request."
+                    }
+                }
+            }
+        }
+    }
+}

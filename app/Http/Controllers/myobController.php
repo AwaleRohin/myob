@@ -41,7 +41,53 @@ class myobController extends Controller
         return redirect()->to($url);
     }
 
-
+    /**
+     * @OA\Get(
+     *     path="/",
+     *     summary="Redirects to myob login page to get necessary access_token",
+     *     tags={"Myob"},
+     *     @OA\Response(
+     *         response="200",
+     *         description="Returns access token, refresh token along with some basic other info",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                  @OA\Property(
+     *                     property="access_token",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="token_type",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="expires_in",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="refresh_token",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="scope",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="user",
+     *                     type="object", properties={
+     *                      @OA\Property(property="uid", type="string"),
+     *                      @OA\Property(property="email", type="string")
+     *                 }),
+     *                 example={"access_token":"A77vnJ5IYQmXxtHLHf1wipwJ-ritfSQB4Yn40X0LBQTFh75vjgQgvGbjmldj4Jqo8fnkEbsh--33ZC90XHtA8GGVMp5KcmMrHJulKU_P7Hv836tyBp_94F24o6Srn5h-1p7WIPPS72i4UtNs57gfDoPeP3RCNa6chMDc7blRwBYtM0ce2DmOgOK","token_type":"bearer","expires_in":"1200","refresh_token":"Ta7J!IAAAABX4_n6xm0ejXjBguhKHLM6LKyDualw1cCPLx0HZbXQvsQAAAAHIozyXQtIK5LdL46Xe84JNIWIHF50wJ0Aqf2Dh4NeeLB2YRwnWXd7WOkOCgh6z6_Vpu9sxmllT5_yZQiW_LKPiakx","scope":"CompanyFile","user":{"uid":"69f9884a7-7rt0-4d58-8439-93euhha4b29d","username":"example@gmail.com"}}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error: Bad request.",
+     *     ),
+     * )
+     */
     public function access_token(Request $request)
     {
         $code = $request->code;
@@ -96,6 +142,102 @@ class myobController extends Controller
     }
 
 
+     /**
+     * @OA\Get(
+     *     path="/accountright",
+     *     @OA\Parameter(
+     *         name="Authorization",
+     *         in="header",
+     *         description="bearer token -- access token",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *      ),
+     *     @OA\Parameter(
+     *         name="x-myobapi-key",
+     *         in="header",
+     *         description="myob client secret",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     * 
+     *     ),
+     *     summary="Account Right Live",
+     *     tags={"Myob"},
+     *     @OA\Response(
+     *         response="200",
+     *         description="Returns company uid and other info",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                  @OA\Property(
+     *                     property="Id",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="Name",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="LibraryPath",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="ProductVersion",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="ProductLevel",
+     *                    type="object", properties={
+     *                      @OA\Property(property="Code", type="string"),
+     *                      @OA\Property(property="Name", type="string")
+     *                 }),
+     *                 @OA\Property(
+     *                     property="CheckOutDate",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="CheckOutBy",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="Uri",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="Country",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="LauncherId",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="SerialNumber",
+     *                     type="string"
+     *                 ),
+     *                 example={
+     *                   "Id": "g856461f-b3dg-p05r-b7t2-f2c4f066078e",
+     *                   "Name": "API Sandbox Demo 125",
+     *                   "LibraryPath": "API Sandbox Demo 125",
+     *                   "ProductVersion": "2019.4",
+     *                   "ProductLevel": {
+     *                      "Code": 30,
+     *                      "Name": "Plus"
+     *                   },
+     *                   "CheckedOutDate": null,
+     *                   "CheckedOutBy": null,
+     *                   "Uri": "https://ar1.api.myob.com/accountright/g856461f-b3dg-p05r-b7t2-f2c4f066078e",
+     *                   "Country": "AU",
+     *                   "LauncherId": "5abb5380-1gh7-80k9-8r64-gfe0c63347fa",
+     *                   "SerialNumber": "728164104656"
+     *              })
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error: Bad request.",
+     *     ),
+     * )
+     */   
     public function accountright_myob(Request $request)
     {
         $headers = [
@@ -136,6 +278,67 @@ class myobController extends Controller
     }
 
 
+    /**
+     * @OA\Get(
+     *     path="/refresh",
+     *     @OA\Parameter(
+     *         name="Authorization",
+     *         in="header",
+     *         description="bearer token -- access token",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *      ),
+     *     @OA\Parameter(
+     *         name="x-myobapi-key",
+     *         in="header",
+     *         description="myob client secret",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     * 
+     *     ),
+     *     summary="Refresh access token",
+     *     tags={"Myob"},
+     *     @OA\Response(
+     *         response="200",
+     *         description="Returns new access_token and other info",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                  @OA\Property(
+     *                     property="access_token",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="token_type",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="expires_in",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="refresh_token",
+     *                     type="string"
+     *                 ),
+     *                  @OA\Property(
+     *                     property="scope",
+     *                     type="string"
+     *                 ),
+     *                 example={
+     *                      "access_token": "AAEAAI3H59w6F9JPGcp3dXy95pTJK0waL6AwiLdoQ81ncmxeVgbq_4LF9uDy5Gm0c8IjSTAoloZAd5C8rhDXHsTNlYRN29Q7gUtqcPRu3UgaWrEEDTCEaGgoK6Y9xmDyUyMG-G_wB6yctDLThyVxfW",
+     *                      "token_type": "bearer",
+     *                      "expires_in": "1200",
+     *                      "refresh_token": "Ta7J!IAAAABM7-Bybtc3FXSCv5EoLDxVz0occm27cUxZ_LMm-p6_AsQAAAAHudWF_CWSa_eID89iGDVe1Rij-Xgt5a6zFZ2IjbwSOcdh3C0JCYrefm5D7tI3gxkvM8QziRusgfUZTs9wbi-pVY7gQOxW2KEU_XYSp4BNfl18JIXe8R4tUM9TlgOO0fbrMaPPIafA9sdYc_u4Ag",
+     *                      "scope": "CompanyFile"
+     *              })
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error: Bad request.",
+     *     ),
+     * )
+     */ 
     public function refresh_access_token(Request $request)
     {
         $token = $this->get_crf_uri_or_token($request);
@@ -183,6 +386,93 @@ class myobController extends Controller
     }
 
 
+    /**
+     * @OA\Post(
+     *     path="/sales/invoice/service",
+     *     @OA\Parameter(
+     *         name="Authorization",
+     *         in="header",
+     *         description="bearer token -- access token",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *      ),
+     *     @OA\Parameter(
+     *         name="x-myobapi-version",
+     *         in="header",
+     *         description="account right version",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     * 
+     *     ),
+     *     @OA\Parameter(
+     *         name="x-myobapi-cftoken",
+     *         in="header",
+     *         description="base64encoded string of username and password",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     * 
+     *     ),
+     *     summary="Create Invoice of Services",
+     *     tags={"Myob"},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="customer_uid",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="account_uid",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="taxcode_uid",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="total_amount",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="rowversion",
+     *                     type="integer"
+     *                 ),
+     *                 example={
+  	 *                      "customer_uid": "8013da04-7cb5-49c5-a8ce-1e25b402aab0",
+     *                      "account_uid": "d3f55ef1-ce77-4ef2-a415-61d04db2c5fc",
+     *                      "taxcode_uid": "2ab1cf79-bce8-4da0-986c-a3bbdd1d02bc",
+     *                      "total_amount": -49.5,
+     *                      "rowversion": "-3848888831541510144"
+     *              })
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Returns status and message",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                  @OA\Property(
+     *                     property="status",
+     *                     type="boolean"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="message",
+     *                     type="string"
+     *                 ),
+     *                 example={
+     *                      "status" : true,
+     *                      "message" :"Invoice created"
+     *              })
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error: Bad request.",
+     *     ),
+     * )
+     */ 
     public function create_service_invoice(Request $request)
     {
         $uri = $this->get_crf_uri_or_token($request);
@@ -241,6 +531,98 @@ class myobController extends Controller
     }
 
 
+    /**
+     * @OA\Post(
+     *     path="/sales/payments",
+     *     @OA\Parameter(
+     *         name="Authorization",
+     *         in="header",
+     *         description="bearer token -- access token",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *      ),
+     *     @OA\Parameter(
+     *         name="x-myobapi-version",
+     *         in="header",
+     *         description="account right version",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     * 
+     *     ),
+     *     @OA\Parameter(
+     *         name="x-myobapi-cftoken",
+     *         in="header",
+     *         description="base64encoded string of username and password",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     * 
+     *     ),
+     *     summary="Create Payment/s",
+     *     tags={"Myob"},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="deposit_to",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="account_uid",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="invoice_uid",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="customer_uid",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="amount_applied",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="type",
+     *                     type="string"
+     *                 ),
+     *                 example={
+     *                      "deposit_to":"Account",
+	 *                      "account_uid":"d3f55ef1-ce77-4ef2-a415-61d04db2c5fc",
+	 *                      "invoice_uid":"bbd73e1b-214b-4543-bd22-0798849ad32f",
+	 *                      "customer_uid":"8013da04-7cb5-49c5-a8ce-1e25b402aab0",
+	 *                      "amount_applied":496.5,
+	 *                      "type":"Invoice"
+     *              })
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Returns status and message",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                  @OA\Property(
+     *                     property="status",
+     *                     type="boolean"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="message",
+     *                     type="string"
+     *                 ),
+     *                 example={
+     *                      "status" : true,
+     *                      "message" :"Payment created"
+     *              })
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error: Bad request.",
+     *     ),
+     * )
+     */
     public function payment(Request $request)
     {
         $uri = $this->get_crf_uri_or_token($request);
@@ -297,6 +679,104 @@ class myobController extends Controller
     }
 
 
+
+    /**
+     * @OA\Post(
+     *     path="/sales/payments-with-discount",
+     *     @OA\Parameter(
+     *         name="Authorization",
+     *         in="header",
+     *         description="bearer token -- access token",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *      ),
+     *     @OA\Parameter(
+     *         name="x-myobapi-version",
+     *         in="header",
+     *         description="account right version",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     * 
+     *     ),
+     *     @OA\Parameter(
+     *         name="x-myobapi-cftoken",
+     *         in="header",
+     *         description="base64encoded string of username and password",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     * 
+     *     ),
+     *     summary="Create Payment/s with discount",
+     *     tags={"Myob"},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="deposit_to",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="account_uid",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="invoice_uid",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="customer_uid",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="amount_applied",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="discount_applied",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="type",
+     *                     type="string"
+     *                 ),
+     *                 example={
+     *                      "deposit_to":"Account",
+	 *                      "account_uid":"d3f55ef1-ce77-4ef2-a415-61d04db2c5fc",
+	 *                      "invoice_uid":"bbd73e1b-214b-4543-bd22-0798849ad32f",
+	 *                      "customer_uid":"8013da04-7cb5-49c5-a8ce-1e25b402aab0",
+	 *                      "amount_applied":496.5,
+	 *                      "discount_applied":26,
+	 *                      "type":"Invoice"
+     *              })
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Returns status and message",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                  @OA\Property(
+     *                     property="status",
+     *                     type="boolean"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="message",
+     *                     type="string"
+     *                 ),
+     *                 example={
+     *                      "status" : true,
+     *                      "message" :"Payment with discount created"
+     *              })
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error: Bad request.",
+     *     ),
+     * )
+     */
     public function payemtWithDiscount(Request $request)
     {
         $uri = $this->get_crf_uri_or_token($request);
@@ -357,6 +837,99 @@ class myobController extends Controller
     }
 
 
+
+    /**
+     * @OA\Post(
+     *     path="sales/invoice/item",
+     *     @OA\Parameter(
+     *         name="Authorization",
+     *         in="header",
+     *         description="bearer token -- access token",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *      ),
+     *     @OA\Parameter(
+     *         name="x-myobapi-version",
+     *         in="header",
+     *         description="account right version",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     * 
+     *     ),
+     *     @OA\Parameter(
+     *         name="x-myobapi-cftoken",
+     *         in="header",
+     *         description="base64encoded string of username and password",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     * 
+     *     ),
+     *     summary="Create item invoice",
+     *     tags={"Myob"},
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="customer_uid",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="item_uid",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="taxcode_uid",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="ship_quantity",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="total_amount",
+     *                     type="integer"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="rowversion",
+     *                     type="integer"
+     *                 ),
+     *                 example={
+     *                      "customer_uid": "8013da04-7cb5-49c5-a8ce-1e25b402aab0",
+	 *                      "item_uid": "4866c877-5b65-4567-900e-310a8a62897f",
+	 *                      "taxcode_uid": "2ab1cf79-bce8-4da0-986c-a3bbdd1d02bc",
+	 *                      "ship_quantity": 20,
+	 *                      "total_amount":399.50,
+	 *                      "rowversion": "-3848888831541510144"
+     *              })
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Returns status and message",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                  @OA\Property(
+     *                     property="status",
+     *                     type="boolean"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="message",
+     *                     type="string"
+     *                 ),
+     *                 example={
+     *                      "status" : true,
+     *                      "message" :"Invoice created"
+     *              })
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error: Bad request.",
+     *     ),
+     * )
+     */
     public function create_item_invoice(Request $request){
         $uri = $this->get_crf_uri_or_token($request);
         if ($uri == null) {
@@ -416,6 +989,81 @@ class myobController extends Controller
     }
 
 
+
+    /**
+     * @OA\Get(
+     *     path="/report/profit-loss-summary",
+     *     @OA\Parameter(
+     *         name="Authorization",
+     *         in="header",
+     *         description="bearer token -- access token",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     *      ),
+     *     @OA\Parameter(
+     *         name="x-myobapi-version",
+     *         in="header",
+     *         description="account right version",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     * 
+     *     ),
+     *     @OA\Parameter(
+     *         name="x-myobapi-cftoken",
+     *         in="header",
+     *         description="base64encoded string of username and password",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     * 
+     *     ),
+     *     @OA\Parameter(
+     *         name="start_date",
+     *         in="path",
+     *         description="date to get summary from",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     * 
+     *     ),
+     *     @OA\Parameter(
+     *         name="end_date",
+     *         in="path",
+     *         description="date to get summary up to",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     * 
+     *     ),
+     *     @OA\Parameter(
+     *         name="reporting_basis",
+     *         in="path",
+     *         description="Should be Cash or Accrual",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     * 
+     *     ),
+     *     @OA\Parameter(
+     *         name="year_end_adjust",
+     *         in="path",
+     *         description="Should be boolean",
+     *         required=true,
+     *         @OA\Schema(type="string"),
+     * 
+     *     ),
+     *     summary="Profit Loss Summary",
+     *     tags={"Myob"},
+     *     @OA\Response(
+     *         response="200",
+     *         description="Returns profit and loss summary",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema()
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Error: Bad request.",
+     *     ),
+     * )
+     */   
     public function profit_loss_summary(Request $request){
         $uri = $this->get_crf_uri_or_token($request);
         if ($uri == null) {
