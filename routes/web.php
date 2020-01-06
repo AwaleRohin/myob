@@ -36,6 +36,8 @@ $router->post('/sales/invoice/item', 'myobController@create_item_invoice');
 $router->get('/sales/invoice/services', 'myobController@get_services_invoices');
 $router->get('/sales/invoice/items', 'myobController@get_services_invoices');
 $router->get('/sales/payments', 'myobController@get_payments');
-$router->get('/api/documentation', function ()  {
+$router->get('/sales/credit-settlements', 'myobController@get_payments');
+$router->post('/sales/credit-settlements', 'myobController@creditSettlement');
+$router->post('/api/documentation', function ()  {
     return view('index');
 });

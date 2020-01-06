@@ -1091,4 +1091,94 @@ class myobController extends Controller
             $result
         ], 200);
     }
+
+
+    public function creditSettlement(Request $request)
+    {
+        $uri = $this->get_crf_uri_or_token($request);
+        if ($uri == null) {
+            return response()->json([
+                'status' => false,
+                'message' => 'crf url not found'
+            ]);
+        }
+        $crf_uri = $uri->crf_uri;
+        $url = $crf_uri . "/Sale/CreditSettlement";
+
+        $invoice_uid = $request->invoice_uid;
+        $customer_uid = $request->customer_uid;
+        $type = $request->type;
+        $sale_uid = $request->sale_uid;
+        $amount_applied = $request->amount_applied;
+        $date = \Carbon\Carbon::now()->toDateTimeString();
+        $headers = $this->post_req_headers($request);
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+        try {
+            $response = $client->request('POST', $url, [
+                'json' => [
+                    'CreditFromInvoice' => [
+                        'UID' => $invoice_uid,
+                    ],
+                    'Customer' => [
+                        'UID' => $customer_uid
+                    ],
+                    'Date' => $date,
+                    'Lines' => [[
+                        'Sale' => [
+                            'UID' => $invoice_uid
+                        ],
+                        'AmountApplied' => $amount_applied,
+                        'Type' => $type
+                    ]]
+                ]
+            ]);
+        } catch (\Exception $exception) {
+            $response = $exception->getResponse()->getBody(true);
+            return response()->json([
+                'status' => false,
+                'error' => json_decode((string) $response, true)
+            ]);
+        }
+        $body = $response->getBody();
+        $result =  json_decode((string) $body, true);
+        return response()->json([
+            'status' => true,
+            'message' => 'Payment with discount created'
+        ], 201);
+    }
+
+
+    public function get_credit_settlements(Request $request){
+        $uri = $this->get_crf_uri_or_token($request);
+        if ($uri == null) {
+            return response()->json([
+                'status' => false,
+                'message' => 'crf url not found'
+            ]);
+        }
+        $crf_uri = $uri->crf_uri;
+        $url = $crf_uri . "/Sale/CreditSettlement";
+
+        $headers = $this->post_req_headers($request);
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+
+        try {
+            $response = $client->request('GET', $url);
+        } catch (\Exception $exception) {
+            $response = $exception->getResponse()->getBody(true);
+            return response()->json([
+                'status' => false,
+                'error' => json_decode((string) $response, true)
+            ]);
+        }
+        $body = $response->getBody();
+        $result =  json_decode((string) $body, true);
+        return response()->json([
+            $result
+        ], 200);
+    }
 }
