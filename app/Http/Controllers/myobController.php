@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Myob;
+use App\MyobClient;
+use App\MyobInvoice;
 
 class myobController extends Controller
 {
@@ -260,20 +262,16 @@ class myobController extends Controller
         $body = $response->getBody();
         $result =  json_decode((string) $body, true);
         try {
-            $bearer_token = $request->header('Authorization');
-            $split_access_token = explode(' ', $bearer_token, 2);
-            $access_token = $split_access_token[1];
-            $user = Myob::where('access_token', $access_token)->first();
-            $user->crf_uri = $result[0]['Uri'];
-            $user->save();
-        } catch (ModelNotFoundException $exception) {
+            $myob_client = new MyobClient;
+            $response = $myob_client->createMyobClient($result);
+        } catch (\Exception $exception) {
             return response()->json([
                 "status" => false,
-                "message" => "User not found"
+                "message" => "Could not create myob client"
             ]);
         };
         return response()->json(
-            $result
+            $response
         );
     }
 
@@ -490,7 +488,10 @@ class myobController extends Controller
         $account_uid = $request->account_uid;
         $taxcode_uid = $request->taxcode_uid;
         $rowversion = $request->rowversion;
-
+        $data =[
+            'account_uid'=>$account_uid,
+            'customer_uid'=>$customer_uid
+        ];
         $headers = $this->post_req_headers($request);
         $client = new \GuzzleHttp\Client([
             'headers' => $headers
@@ -522,12 +523,12 @@ class myobController extends Controller
                 'error' => json_decode((string) $response, true)
             ]);
         }
-        $body = $response->getBody();
-        $result =  json_decode((string) $body, true);
-        return response()->json([
-            'status' => true,
-            'message' => 'Invoice created'
-        ], 201);
+        $invoice = new MyobInvoice;
+        $invoice = $invoice->createMyobServiceInvoice($data);
+
+        return response()->json(
+            $invoice
+        , 201);
     }
 
 
@@ -796,7 +797,6 @@ class myobController extends Controller
         $discount_applied = $request->discount_applied;
         $customer_uid = $request->customer_uid;
         $type = $request->type;
-
         $headers = $this->post_req_headers($request);
         $client = new \GuzzleHttp\Client([
             'headers' => $headers
@@ -947,6 +947,10 @@ class myobController extends Controller
         $item_uid = $request->item_uid;
         $taxcode_uid = $request->taxcode_uid;
         $rowversion = $request->rowversion;
+        $data =[
+            'customer_uid'=>$customer_uid,
+            'item_uid'=>$item_uid
+        ];
 
         $headers = $this->post_req_headers($request);
         $client = new \GuzzleHttp\Client([
@@ -980,91 +984,17 @@ class myobController extends Controller
                 'error' => json_decode((string) $response, true)
             ]);
         }
-        $body = $response->getBody();
-        $result =  json_decode((string) $body, true);
-        return response()->json([
-            'status' => true,
-            'message' => 'Invoice created'
-        ], 201);
+        $invoice = new MyobInvoice;
+        $invoice = $invoice->createMyobItemInvoice($data); 
+        return response()->json(
+            $invoice
+        , 201);
     }
 
 
 
-    /**
-     * @OA\Get(
-     *     path="/report/profit-loss-summary",
-     *     @OA\Parameter(
-     *         name="Authorization",
-     *         in="header",
-     *         description="bearer token -- access token",
-     *         required=true,
-     *         @OA\Schema(type="string"),
-     *      ),
-     *     @OA\Parameter(
-     *         name="x-myobapi-version",
-     *         in="header",
-     *         description="account right version",
-     *         required=true,
-     *         @OA\Schema(type="string"),
-     * 
-     *     ),
-     *     @OA\Parameter(
-     *         name="x-myobapi-cftoken",
-     *         in="header",
-     *         description="base64encoded string of username and password",
-     *         required=true,
-     *         @OA\Schema(type="string"),
-     * 
-     *     ),
-     *     @OA\Parameter(
-     *         name="start_date",
-     *         in="path",
-     *         description="date to get summary from",
-     *         required=true,
-     *         @OA\Schema(type="string"),
-     * 
-     *     ),
-     *     @OA\Parameter(
-     *         name="end_date",
-     *         in="path",
-     *         description="date to get summary up to",
-     *         required=true,
-     *         @OA\Schema(type="string"),
-     * 
-     *     ),
-     *     @OA\Parameter(
-     *         name="reporting_basis",
-     *         in="path",
-     *         description="Should be Cash or Accrual",
-     *         required=true,
-     *         @OA\Schema(type="string"),
-     * 
-     *     ),
-     *     @OA\Parameter(
-     *         name="year_end_adjust",
-     *         in="path",
-     *         description="Should be boolean",
-     *         required=true,
-     *         @OA\Schema(type="string"),
-     * 
-     *     ),
-     *     summary="Profit Loss Summary",
-     *     tags={"Myob"},
-     *     @OA\Response(
-     *         response="200",
-     *         description="Returns profit and loss summary",
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema()
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response="400",
-     *         description="Error: Bad request.",
-     *     ),
-     * )
-     */   
-    public function profit_loss_summary(Request $request){
+
+    public function get_services_invoices(Request $request){
         $uri = $this->get_crf_uri_or_token($request);
         if ($uri == null) {
             return response()->json([
@@ -1073,7 +1003,73 @@ class myobController extends Controller
             ]);
         }
         $crf_uri = $uri->crf_uri;
-        $url = $crf_uri . "/Report/ProfitAndLossSummary?StartDate=".$request->start_date."&EndDate=".$request->end_date."&ReportingBasis=".$request->reporting_basis."&YearEndAdjust=".$request->year_end_adjust;
+        $url = $crf_uri . "/Sale/Invoice/Service";
+
+        $headers = $this->post_req_headers($request);
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+
+        try {
+            $response = $client->request('GET', $url);
+        } catch (\Exception $exception) {
+            $response = $exception->getResponse()->getBody(true);
+            return response()->json([
+                'status' => false,
+                'error' => json_decode((string) $response, true)
+            ]);
+        }
+        $body = $response->getBody();
+        $result =  json_decode((string) $body, true);
+        return response()->json([
+            $result
+        ], 200);
+    }
+
+
+    public function get_items_invoices(Request $request){
+        $uri = $this->get_crf_uri_or_token($request);
+        if ($uri == null) {
+            return response()->json([
+                'status' => false,
+                'message' => 'crf url not found'
+            ]);
+        }
+        $crf_uri = $uri->crf_uri;
+        $url = $crf_uri . "/Sale/Invoice/Item";
+
+        $headers = $this->post_req_headers($request);
+        $client = new \GuzzleHttp\Client([
+            'headers' => $headers
+        ]);
+
+        try {
+            $response = $client->request('GET', $url);
+        } catch (\Exception $exception) {
+            $response = $exception->getResponse()->getBody(true);
+            return response()->json([
+                'status' => false,
+                'error' => json_decode((string) $response, true)
+            ]);
+        }
+        $body = $response->getBody();
+        $result =  json_decode((string) $body, true);
+        return response()->json([
+            $result
+        ], 200);
+    }
+
+
+    public function get_payments(Request $request){
+        $uri = $this->get_crf_uri_or_token($request);
+        if ($uri == null) {
+            return response()->json([
+                'status' => false,
+                'message' => 'crf url not found'
+            ]);
+        }
+        $crf_uri = $uri->crf_uri;
+        $url = $crf_uri . "/Sale/CustomerPayment";
 
         $headers = $this->post_req_headers($request);
         $client = new \GuzzleHttp\Client([
