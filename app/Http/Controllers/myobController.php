@@ -1145,7 +1145,7 @@ class myobController extends Controller
         $result =  json_decode((string) $body, true);
         return response()->json([
             'status' => true,
-            'message' => 'Payment with discount created'
+            'message' => 'Credit Settlement created                                                                                                                                                                                                                             '
         ], 201);
     }
 
